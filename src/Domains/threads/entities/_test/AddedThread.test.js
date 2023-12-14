@@ -26,20 +26,16 @@ describe('AddedThread entities', () => {
   });
 
   it('should create addedThread object correctly', () => {
-   
-    // Arrange
     const payload = {
-      id: 'thread-123',
-      title: 'dummy title',
-      owner: 'user-123',
+      id: 'thread-id',
+      title: 'thread-title',
+      owner: 'thread-owner',
     };
 
-    // Action
-    const addedThread = new AddedThread(payload);
+    const {id, title, owner,} = new AddedThread(payload);
 
-    // Assert
-    expect(addedThread.id).toEqual(payload.id);
-    expect(addedThread.title).toEqual(payload.title);
-    expect(addedThread.owner).toEqual(payload.owner);
+    expect(id).toEqual(payload.id);
+    expect(title).toEqual(payload.title);
+    expect(owner).toEqual(payload.owner);
   });
 });
