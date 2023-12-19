@@ -1,56 +1,59 @@
-const AuthorizationError = require("../../Commons/exceptions/AuthorizationError");
-const NotFoundError = require("../../Commons/exceptions/NotFoundError");
-const CommentRepository = require("../../Domains/comments/CommentRepository");
-const AddedComment = require("../../Domains/comments/entities/AddedComment");
+const CommentRepository = require('../../Domains/comments/CommentRepository');
+const AddedComment = require('../../Domains/comments/entities/AddedComment');
+const Comment = require('../../Domains/comments/entities/Comment');
 
 class CommentRepositoryPostgres extends CommentRepository {
   constructor(pool, idGenerator) {
     super();
-
     this._pool = pool;
     this._idGenerator = idGenerator;
   }
 
-  async addComment({ content, owner, threadId }) {
+  async addComment(newComment) {
+    const { content, owner, threadId } = newComment;
     const id = `comment-${this._idGenerator()}`;
-    const date = new Date().toISOString();
 
     const query = {
-      text: "INSERT INTO comments VALUES ($1, $2, $3, $4, $5) RETURNING id, content, owner",
-      values: [id, content, owner, threadId, date],
+      text: 'INSERT INTO comments VALUES($1, $2, $3, $4, $5, $6) RETURNING id, content, owner',
+      values: [id, content, owner, threadId, false, new Date().toISOString()],
     };
 
     const result = await this._pool.query(query);
-    return new AddedComment(result.rows[0]);
+
+    return new AddedComment({ ...result.rows[0] });
   }
 
-  async verifyAvailableComment(commentId, threadId) {
+  async isCommentExist(commentId) {
+    /**
+     * @TODO 8
+     * Lengkapi kode pada method `isCommentExist` yang berguna untuk
+     * melihat apakah komentar berdasarkan `commentId` sudah ada di database atau belum.
+     *
+     * Method ini harus mengembalikan `true` jika komentar sudah tersedia dan
+     * mengembalikan `false` jika komentar belum tersedia.
+     */
     const query = {
-      text: "SELECT * FROM comments WHERE id = $1 AND thread_id = $2",
-      values: [commentId, threadId],
+      text: 'SELECT id FROM comments WHERE id = $1',
+      values: [commentId],
+    };
+    const result = await this._pool.query(query);
+    return result.rowCount > 0;
+  }
+
+  async isCommentOwner(commentId, owner) {
+    const query = {
+      text: 'SELECT owner FROM comments WHERE id = $1',
+      values: [commentId],
     };
 
     const result = await this._pool.query(query);
-    if (!result.rowCount) {
-      throw new NotFoundError("comment tidak ditemukan");
-    }
+
+    return result.rows[0].owner === owner;
   }
 
-  async verifyOwnerComment(commentId, owner) {
+  async deleteComment(commentId) {
     const query = {
-      text: "SELECT * FROM comments WHERE id = $1 AND owner = $2",
-      values: [commentId, owner],
-    };
-
-    const result = await this._pool.query(query);
-    if (!result.rowCount) {
-      throw new AuthorizationError("Anda tidak berhak mengakses resource ini");
-    }
-  }
-
-  async deleteCommentByCommentId(commentId) {
-    const query = {
-      text: "UPDATE comments SET is_delete = TRUE WHERE id = $1",
+      text: 'UPDATE comments SET is_delete = true WHERE id = $1',
       values: [commentId],
     };
 
@@ -59,12 +62,25 @@ class CommentRepositoryPostgres extends CommentRepository {
 
   async getCommentsByThreadId(threadId) {
     const query = {
-      text: "SELECT c.id, u.username, c.date, c.content, c.is_delete FROM comments c join users u on c.owner = u.id WHERE c.thread_id = $1 ORDER BY c.date ASC",
+      text: `SELECT 
+                comments.id,
+                comments.content,
+                comments.date,
+                comments.is_delete,
+                users.username
+              FROM comments 
+              INNER JOIN users ON comments.owner = users.id 
+              WHERE comments.thread_id = $1
+              ORDER BY comments.date`,
       values: [threadId],
     };
 
     const result = await this._pool.query(query);
-    return result.rows;
+
+    return result.rows.map((row) => new Comment({
+      ...row,
+      isDelete: row.is_delete,
+    }));
   }
 }
 
