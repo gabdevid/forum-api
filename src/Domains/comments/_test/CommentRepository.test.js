@@ -1,4 +1,4 @@
-import CommentRepository from '../CommentRepository';
+const CommentRepository = require('../CommentRepository');
 
 describe('CommentRepository abstract', () => {
   it('should throw error when invoke abstract behavior', async () => {

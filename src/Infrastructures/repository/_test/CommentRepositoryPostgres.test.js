@@ -1,19 +1,19 @@
-import { cleanTable, addThread } from '../../../../tests/ThreadsTableTestHelper';
-import { cleanTable as _cleanTable, addUser } from '../../../../tests/UsersTableTestHelper';
-import pool, { end } from '../../database/postgres/pool';
-import { cleanTable as __cleanTable, findCommentById, addComment } from '../../../../tests/CommentsTableTestHelper';
-import NewComment from '../../../Domains/comments/entities/NewComment';
-import CommentRepositoryPostgres from '../CommentRepositoryPostgres';
+const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
+const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
+const pool = require('../../database/postgres/pool');
+const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
+const NewComment = require('../../../Domains/comments/entities/NewComment');
+const CommentRepositoryPostgres = require('../CommentRepositoryPostgres');
 
 describe('CommentRepositoryPostgres', () => {
   afterEach(async () => {
-    await __cleanTable();
-    await cleanTable();
-    await _cleanTable();
+    await CommentsTableTestHelper.cleanTable();
+    await ThreadsTableTestHelper.cleanTable();
+    await UsersTableTestHelper.cleanTable();
   });
 
   afterAll(async () => {
-    await end();
+    await pool.end();
   });
 
   describe('addComment function', () => {
@@ -25,8 +25,8 @@ describe('CommentRepositoryPostgres', () => {
         threadId: 'thread-123',
       });
       const fakeIdGenerator = () => '123';
-      await addUser({ id: 'user-123' });
-      await addThread({ id: 'thread-123' });
+      await UsersTableTestHelper.addUser({ id: 'user-123' });
+      await ThreadsTableTestHelper.addThread({ id: 'thread-123' });
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, fakeIdGenerator);
 
       // Action
@@ -37,7 +37,7 @@ describe('CommentRepositoryPostgres', () => {
       expect(addedComment.content).toEqual(newComment.content);
       expect(addedComment.owner).toEqual(newComment.owner);
 
-      const foundComment = await findCommentById('comment-123');
+      const foundComment = await CommentsTableTestHelper.findCommentById('comment-123');
       expect(foundComment.id).toEqual('comment-123');
       expect(foundComment.content).toEqual(newComment.content);
       expect(foundComment.owner).toEqual(newComment.owner);
@@ -50,9 +50,9 @@ describe('CommentRepositoryPostgres', () => {
   describe('isCommentExist function', () => {
     it('should return true if comment exists', async () => {
       // Arrange
-      await addUser({ id: 'user-123' });
-      await addThread({ id: 'thread-123' });
-      await addComment({ id: 'comment-123' });
+      await UsersTableTestHelper.addUser({ id: 'user-123' });
+      await ThreadsTableTestHelper.addThread({ id: 'thread-123' });
+      await CommentsTableTestHelper.addComment({ id: 'comment-123' });
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
 
       // Action
@@ -77,9 +77,9 @@ describe('CommentRepositoryPostgres', () => {
   describe('isCommentOwner function', () => {
     it('should return true if user is comment owner', async () => {
       // Arrange
-      await addUser({ id: 'user-123' });
-      await addThread({ id: 'thread-123' });
-      await addComment({ id: 'comment-123', owner: 'user-123' });
+      await UsersTableTestHelper.addUser({ id: 'user-123' });
+      await ThreadsTableTestHelper.addThread({ id: 'thread-123' });
+      await CommentsTableTestHelper.addComment({ id: 'comment-123', owner: 'user-123' });
 
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
 
@@ -92,9 +92,9 @@ describe('CommentRepositoryPostgres', () => {
 
     it('should return false if user is not comment owner', async () => {
       // Arrange
-      await addUser({ id: 'user-123' });
-      await addThread({ id: 'thread-123' });
-      await addComment({ id: 'comment-123', owner: 'user-123' });
+      await UsersTableTestHelper.addUser({ id: 'user-123' });
+      await ThreadsTableTestHelper.addThread({ id: 'thread-123' });
+      await CommentsTableTestHelper.addComment({ id: 'comment-123', owner: 'user-123' });
 
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
 
@@ -109,9 +109,9 @@ describe('CommentRepositoryPostgres', () => {
   describe('deleteComment', () => {
     it('should update is_delete to true', async () => {
       // Arrange
-      await addUser({ id: 'user-123' });
-      await addThread({ id: 'thread-123' });
-      await addComment({ id: 'comment-123' });
+      await UsersTableTestHelper.addUser({ id: 'user-123' });
+      await ThreadsTableTestHelper.addThread({ id: 'thread-123' });
+      await CommentsTableTestHelper.addComment({ id: 'comment-123' });
 
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
 
@@ -119,7 +119,7 @@ describe('CommentRepositoryPostgres', () => {
       await commentRepositoryPostgres.deleteComment('comment-123');
 
       // Assert
-      const foundComment = await findCommentById('comment-123');
+      const foundComment = await CommentsTableTestHelper.findCommentById('comment-123');
       expect(foundComment.is_delete).toEqual(true);
     });
   });
@@ -131,13 +131,13 @@ describe('CommentRepositoryPostgres', () => {
       });
 
       // Arrange
-      await addUser({ id: 'user-123' });
-      await addThread({ id: 'thread-123' });
-      await addComment({ id: 'comment-123', threadId: 'thread-123' });
+      await UsersTableTestHelper.addUser({ id: 'user-123' });
+      await ThreadsTableTestHelper.addThread({ id: 'thread-123' });
+      await CommentsTableTestHelper.addComment({ id: 'comment-123', threadId: 'thread-123' });
       await wait(250);
-      await addComment({ id: 'comment-456', threadId: 'thread-123' });
+      await CommentsTableTestHelper.addComment({ id: 'comment-456', threadId: 'thread-123' });
       await wait(250);
-      await addComment({ id: 'comment-789', threadId: 'thread-123' });
+      await CommentsTableTestHelper.addComment({ id: 'comment-789', threadId: 'thread-123' });
 
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
 
