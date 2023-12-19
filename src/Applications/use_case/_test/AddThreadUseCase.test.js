@@ -1,40 +1,32 @@
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
-const AddedThread = require('../../../Domains/threads/entities/AddedThread');
 const AddThreadUseCase = require('../AddThreadUseCase');
 
 describe('AddThreadUseCase', () => {
   it('should orchestrating the add thread action correctly', async () => {
-   
-    // Arrange
+
     const mockThreadRepository = new ThreadRepository();
-    const mockReturnAddedThread = {
+    const mockReturnAddThread = {
       id: 'thread-123',
-      title: 'title',
+      title: 'sebuah thread',
       owner: 'user-123',
     };
-
-    mockThreadRepository.addThread = jest.fn(() => Promise.resolve(mockReturnAddedThread));
-
-
+    mockThreadRepository.addThread = jest.fn(() => Promise.resolve(mockReturnAddThread));
     const useCase = new AddThreadUseCase({
       threadRepository: mockThreadRepository,
     });
     const useCasePayload = {
+      title: 'sebuah thread',
+      body: 'sebuah body thread',
+      owner: 'user-123',
+    };
+    const expectedAddedThread = {
       id: 'thread-123',
-      body: 'body',
+      title: 'sebuah thread',
       owner: 'user-123',
     };
 
-    const expectedAddedThread = new AddedThread({
-      id: 'thread-123',
-      title: 'title',
-      owner: 'owner',
-    });
-
-    // Action
     const addedThread = await useCase.execute(useCasePayload);
 
-    // Assert
     expect(addedThread).toStrictEqual(expectedAddedThread);
     expect(mockThreadRepository.addThread).toBeCalledWith(useCasePayload);
   });
