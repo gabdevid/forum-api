@@ -1,4 +1,4 @@
-import AddedThread from '../AddedThread';
+const AddedThread = require('../AddedThread');
 
 describe('AddedThread entities', () => {
   it('should throw error when payload did not contain needed property', () => {

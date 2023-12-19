@@ -1,6 +1,6 @@
-import ThreadRepository from '../../../Domains/threads/ThreadRepository';
-import AddedThread from '../../../Domains/threads/entities/AddedThread';
-import AddThreadUseCase from '../AddThreadUseCase';
+const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
+const AddedThread = require('../../../Domains/threads/entities/AddedThread');
+const AddThreadUseCase = require('../AddThreadUseCase');
 
 describe('AddThreadUseCase', () => {
   it('should orchestrating the add thread action correctly', async () => {
