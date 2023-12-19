@@ -1,7 +1,7 @@
-const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
-const CommentRepository = require('../../../Domains/comments/CommentRepository');
-const AddCommentUseCase = require('../AddCommentUseCase');
-const AddedComment = require('../../../Domains/comments/entities/AddedComment');
+import ThreadRepository from '../../../Domains/threads/ThreadRepository';
+import CommentRepository from '../../../Domains/comments/CommentRepository';
+import AddCommentUseCase from '../AddCommentUseCase';
+import AddedComment from '../../../Domains/comments/entities/AddedComment';
 
 describe('AddCommentUseCase', () => {
   it('should throw error when thread not found', async () => {

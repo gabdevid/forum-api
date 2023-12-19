@@ -1,15 +1,15 @@
-const InvariantError = require('../../../Commons/exceptions/InvariantError');
-const AuthenticationsTableTestHelper = require('../../../../tests/AuthenticationsTableTestHelper');
-const pool = require('../../database/postgres/pool');
-const AuthenticationRepositoryPostgres = require('../AuthenticationRepositoryPostgres');
+import InvariantError from '../../../Commons/exceptions/InvariantError';
+import { cleanTable, findToken, addToken } from '../../../../tests/AuthenticationsTableTestHelper';
+import pool, { end } from '../../database/postgres/pool';
+import AuthenticationRepositoryPostgres from '../AuthenticationRepositoryPostgres';
 
 describe('AuthenticationRepository postgres', () => {
   afterEach(async () => {
-    await AuthenticationsTableTestHelper.cleanTable();
+    await cleanTable();
   });
 
   afterAll(async () => {
-    await pool.end();
+    await end();
   });
 
   describe('addToken function', () => {
@@ -22,7 +22,7 @@ describe('AuthenticationRepository postgres', () => {
       await authenticationRepository.addToken(token);
 
       // Assert
-      const tokens = await AuthenticationsTableTestHelper.findToken(token);
+      const tokens = await findToken(token);
       expect(tokens).toHaveLength(1);
       expect(tokens[0].token).toBe(token);
     });
@@ -43,7 +43,7 @@ describe('AuthenticationRepository postgres', () => {
       // Arrange
       const authenticationRepository = new AuthenticationRepositoryPostgres(pool);
       const token = 'token';
-      await AuthenticationsTableTestHelper.addToken(token);
+      await addToken(token);
 
       // Action & Assert
       await expect(authenticationRepository.checkAvailabilityToken(token))
@@ -56,13 +56,13 @@ describe('AuthenticationRepository postgres', () => {
       // Arrange
       const authenticationRepository = new AuthenticationRepositoryPostgres(pool);
       const token = 'token';
-      await AuthenticationsTableTestHelper.addToken(token);
+      await addToken(token);
 
       // Action
       await authenticationRepository.deleteToken(token);
 
       // Assert
-      const tokens = await AuthenticationsTableTestHelper.findToken(token);
+      const tokens = await findToken(token);
       expect(tokens).toHaveLength(0);
     });
   });

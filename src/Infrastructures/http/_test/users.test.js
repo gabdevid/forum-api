@@ -1,15 +1,15 @@
-const pool = require('../../database/postgres/pool');
-const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
-const container = require('../../container');
-const createServer = require('../createServer');
+import { end } from '../../database/postgres/pool';
+import { cleanTable, addUser } from '../../../../tests/UsersTableTestHelper';
+import container from '../../container';
+import createServer from '../createServer';
 
 describe('/users endpoint', () => {
   afterAll(async () => {
-    await pool.end();
+    await end();
   });
 
   afterEach(async () => {
-    await UsersTableTestHelper.cleanTable();
+    await cleanTable();
   });
 
   describe('when POST /users', () => {
@@ -130,7 +130,7 @@ describe('/users endpoint', () => {
 
     it('should response 400 when username unavailable', async () => {
       // Arrange
-      await UsersTableTestHelper.addUser({ username: 'dicoding' });
+      await addUser({ username: 'dicoding' });
       const requestPayload = {
         username: 'dicoding',
         fullname: 'Dicoding Indonesia',

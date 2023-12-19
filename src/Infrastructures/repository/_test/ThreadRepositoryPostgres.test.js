@@ -1,25 +1,25 @@
-const ThreadTableTestHelper = require("../../../../tests/ThreadTableTestHelper");
-const UsersTableTestHelper = require("../../../../tests/UsersTableTestHelper");
-const NotFoundError = require("../../../Commons/exceptions/NotFoundError");
-const AddedThread = require("../../../Domains/threads/entities/AddedThread");
-const NewThread = require("../../../Domains/threads/entities/NewThread");
-const pool = require("../../database/postgres/pool");
-const ThreadRepositoryPostgres = require("../ThreadRepositoryPostgres");
+import { cleanTable, findThreadsById, addThread } from "../../../../tests/ThreadTableTestHelper";
+import { cleanTable as _cleanTable, addUser } from "../../../../tests/UsersTableTestHelper";
+import NotFoundError from "../../../Commons/exceptions/NotFoundError";
+import AddedThread from "../../../Domains/threads/entities/AddedThread";
+import NewThread from "../../../Domains/threads/entities/NewThread";
+import pool, { end } from "../../database/postgres/pool";
+import ThreadRepositoryPostgres from "../ThreadRepositoryPostgres";
 
 describe("ThreadRepositoryPostgres", () => {
   afterEach(async () => {
-    await ThreadTableTestHelper.cleanTable();
-    await UsersTableTestHelper.cleanTable();
+    await cleanTable();
+    await _cleanTable();
   });
 
   afterAll(async () => {
-    await pool.end();
+    await end();
   });
 
   describe("addThread function", () => {
     it("should persist new thread and return added thread corerrecly", async () => {
       // Arrange
-      await UsersTableTestHelper.addUser({
+      await addUser({
         username: "ardi",
         password: "secret",
       });
@@ -39,13 +39,13 @@ describe("ThreadRepositoryPostgres", () => {
       await threadRepositoryPostgres.addThread(newThread);
 
       // Assert
-      const threads = await ThreadTableTestHelper.findThreadsById("thread-123");
+      const threads = await findThreadsById("thread-123");
       expect(threads).toHaveLength(1);
     });
 
     it("should return added thread correctly", async () => {
       // Arrange
-      await UsersTableTestHelper.addUser({
+      await addUser({
         username: "ardi",
         password: "secret",
       });
@@ -92,8 +92,8 @@ describe("ThreadRepositoryPostgres", () => {
 
     it("should not throw NotFoundError when thread found", async () => {
       // Arrange
-      await UsersTableTestHelper.addUser({ id: "user-123" });
-      await ThreadTableTestHelper.addThread({
+      await addUser({ id: "user-123" });
+      await addThread({
         id: "thread-123",
         owner: "user-123",
       });
@@ -134,8 +134,8 @@ describe("ThreadRepositoryPostgres", () => {
         body: "Thread body test",
         date: new Date("2023-10-26T15:34:43.671Z"),
       };
-      await UsersTableTestHelper.addUser({ id: "user-123", username: "ardi" });
-      await ThreadTableTestHelper.addThread(payloadThread);
+      await addUser({ id: "user-123", username: "ardi" });
+      await addThread(payloadThread);
 
       const threadRepositoryPostgres = new ThreadRepositoryPostgres(
         pool,
