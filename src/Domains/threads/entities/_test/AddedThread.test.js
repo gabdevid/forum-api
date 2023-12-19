@@ -1,41 +1,48 @@
-const AddedThread = require('../AddedThread');
+const AddedThread = require("../AddedThread");
 
-describe('AddedThread entities', () => {
-  it('should throw error when payload did not contain needed property', () => {
+describe("AddedThread entities", () => {
+  it("should throw error when not contain needed property", () => {
     // Arrange
     const payload = {
-      id: 'thread-123',
+      id: "thread-123",
+      title: "title",
     };
 
     // Action and Assert
-    expect(() => new AddedThread(payload))
-      .toThrowError('ADDED_THREAD.NOT_CONTAIN_NEEDED_PROPERTY');
+    expect(() => new AddedThread(payload)).toThrowError(
+      "ADDED_THREAD.NOT_CONTAIN_NEEDED_PROPERTY"
+    );
   });
 
-  it('should throw error when payload did not meet data type specification', () => {
+  it("should throw error when not meet data type specification", () => {
     // Arrange
     const payload = {
-      id: 123,
-      title: true,
-      owner: {},
+      id: "thread-123",
+      title: "title",
+      owner: 123,
     };
 
     // Action and Assert
-    expect(() => new AddedThread(payload))
-      .toThrowError('ADDED_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION');
+    expect(() => new AddedThread(payload)).toThrowError(
+      "ADDED_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION"
+    );
   });
 
-  it('should create addedThread object correctly', () => {
+  it("should return AddedThread entities correcly", () => {
+    // Arrange
     const payload = {
-      id: 'thread-id',
-      title: 'thread-title',
-      owner: 'thread-owner',
+      id: "thread-123",
+      title: "title",
+      owner: "user-123",
     };
 
-    const {id, title, owner,} = new AddedThread(payload);
+    // Action
+    const addedThread = new AddedThread(payload);
 
-    expect(id).toEqual(payload.id);
-    expect(title).toEqual(payload.title);
-    expect(owner).toEqual(payload.owner);
+    // Assert
+    expect(addedThread).toBeInstanceOf(AddedThread);
+    expect(addedThread.id).toEqual(payload.id);
+    expect(addedThread.title).toEqual(payload.title);
+    expect(addedThread.owner).toEqual(payload.owner);
   });
 });
