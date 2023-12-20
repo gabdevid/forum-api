@@ -19,8 +19,8 @@ jobs:
       postgres:
         image: postgres
         env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: forum
+          POSTGRES_PASSWORD: dicoding
+          POSTGRES_DB: JanganMenyerah!
         ports:
           - 5432:5432
         options: >-
