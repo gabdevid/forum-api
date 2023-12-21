@@ -15,14 +15,7 @@ describe('ThreadRepositoryPostgres', () => {
 
   describe('addThread', () => {
     it('should persist new thread and return added thread correctly', async () => {
-      /**
-       * TODO 4
-       * Lengkapi pengujian fungsi `addThread` agar kita dapat
-       * memastikan bahwa fungsi tersebut memasukkan data ke dalam database dengan benar.
-       *
-       * Pada pengujian ini, manfaatkanlah fungsi `ThreadsTableTestHelper.findThreadById`
-       * untuk mengecek data `thread` yang ada di database berdasarkan id thread.
-       */
+   
       await UsersTableTestHelper.addUser({ id: 'user-123' });
       const newThread = {
         title: 'sebuah thread',

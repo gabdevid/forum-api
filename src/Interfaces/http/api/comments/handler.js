@@ -35,12 +35,6 @@ class CommentsHandler {
     const { id: owner } = request.auth.credentials;
     const { threadId, commentId: id } = request.params;
 
-    /**
-     * @TODO 9
-     * Eksekusi useCase DeleteCommentUseCase untuk menjalankan aksi **menghapus komentar**
-     *
-     * Untuk mendapatkan useCase, pastikan Anda memanfaatkan method `this._container.getInstance`
-     */
     const useCase = this._container.getInstance(DeleteCommentUseCase.name);
     await useCase.execute({ threadId, commentId: id, owner });
 
