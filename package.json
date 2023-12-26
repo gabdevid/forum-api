@@ -22,7 +22,8 @@
     "dotenv": "^10.0.0",
     "instances-container": "^2.0.3",
     "nanoid": "^3.1.23",
-    "pg": "^8.11.3"
+    "pg": "^8.11.3",
+    "semver": "^7.5.4"
   },
   "devDependencies": {
     "@types/jest": "^26.0.24",
@@ -31,6 +32,6 @@
     "eslint-plugin-import": "^2.28.1",
     "jest": "^27.0.6",
     "node-pg-migrate": "^5.10.0",
-    "nodemon": "^2.0.9"
+    "nodemon": "^3.0.2"
   }
 }
