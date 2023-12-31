@@ -20,7 +20,7 @@ jobs:
         image: postgres
         env:
           POSTGRES_PASSWORD: ${{ secrets.PGPASSWORD }}
-          POSTGRES_DB: ${{ secrets.PGDATABASE }}
+          POSTGRES_DB: ${{ secrets.PGDATABASE }}np
         ports:
           - 5432:5432
         options: >-
