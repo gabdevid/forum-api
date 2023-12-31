@@ -36,9 +36,7 @@ class CommentRepositoryPostgres extends CommentRepository {
       text: 'SELECT id FROM comments WHERE id = $1',
       values: [commentId],
     };
-
     const result = await this._pool.query(query);
-
     return result.rowCount > 0;
   }
 

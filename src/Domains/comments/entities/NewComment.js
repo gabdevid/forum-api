@@ -16,7 +16,6 @@ class NewComment {
 
     // Lengkapi kodenya ...
     const { threadId, content, owner } = payload;
-
     this.threadId = threadId;
     this.content = content;
     this.owner = owner;
@@ -28,11 +27,7 @@ class NewComment {
       throw new Error('NEW_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY');
     }
 
-    if (
-        typeof threadId !== 'string'
-        || typeof content !== 'string'
-        || typeof owner !== 'string'
-    ) {
+    if (typeof threadId !== 'string' || typeof content !== 'string' || typeof owner !== 'string') {
       throw new Error('NEW_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION');
     }
   }

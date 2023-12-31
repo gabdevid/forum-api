@@ -27,6 +27,7 @@ class AddCommentUseCase {
     if (!isThreadExist) {
       throw new Error('ADD_COMMENT_USE_CASE.THREAD_NOT_FOUND');
     }
+
     return this._commentRepository.addComment(newComment);
   }
 }

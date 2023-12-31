@@ -2,7 +2,6 @@ const ThreadRepositoryPostgres = require('../ThreadRepositoryPostgres');
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const pool = require('../../database/postgres/pool');
 const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
-const AddThread = require('../../../Domains/threads/entities/NewThread');
 
 describe('ThreadRepositoryPostgres', () => {
   afterEach(async () => {
@@ -17,36 +16,35 @@ describe('ThreadRepositoryPostgres', () => {
   describe('addThread', () => {
     it('should persist new thread and return added thread correctly', async () => {
       /**
-       * @TODO 4
+       * TODO 4
        * Lengkapi pengujian fungsi `addThread` agar kita dapat
        * memastikan bahwa fungsi tersebut memasukkan data ke dalam database dengan benar.
        *
        * Pada pengujian ini, manfaatkanlah fungsi `ThreadsTableTestHelper.findThreadById`
        * untuk mengecek data `thread` yang ada di database berdasarkan id thread.
        */
-      await UsersTableTestHelper.addUser({});
-      const addThread = new AddThread({
-        title: 'a thread',
-        body: 'this a body thread',
+      await UsersTableTestHelper.addUser({ id: 'user-123' });
+      const newThread = {
+        title: 'sebuah thread',
+        body: 'sebuah body thread',
         owner: 'user-123',
-      });
-      const fakeIdGenerator = () => '123';
-      const threadRepositoryPostgres = new ThreadRepositoryPostgres(
-          pool,
-          fakeIdGenerator,
-      );
-      const addedThread = await threadRepositoryPostgres.addThread(
-          addThread
-      );
-      const thread = await ThreadsTableTestHelper.findThreadById(
-          'thread-123',
-      );
+      };
+      const fakeIdGenerator = () => '123'; // stub!
+      const repository = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
+
+      const addedThread = await repository.addThread(newThread);
 
       expect(addedThread.id).toEqual('thread-123');
-      expect(addedThread.title).toEqual(addThread.title);
-      expect(addedThread.owner).toEqual(addThread.owner);
+      expect(addedThread.title).toEqual(newThread.title);
+      expect(addedThread.owner).toEqual(newThread.owner);
 
+      const thread = await ThreadsTableTestHelper.findThreadById('thread-123');
       expect(thread).toBeDefined();
+      expect(thread.id).toEqual('thread-123');
+      expect(thread.title).toEqual(newThread.title);
+      expect(thread.owner).toEqual(newThread.owner);
+      expect(thread.body).toEqual(newThread.body);
+      expect(thread.date).toBeDefined();
     });
   });
 
