@@ -1,6 +1,6 @@
 {
+    "javascript.suggestionActions.enabled": false,
     "githubPullRequests.ignoredPullRequestBranches": [
-        "master",
         "master"
     ]
 }
