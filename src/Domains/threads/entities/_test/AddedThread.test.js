@@ -26,16 +26,22 @@ describe('AddedThread entities', () => {
   });
 
   it('should create addedThread object correctly', () => {
+    /**
+     * @TODO 2
+     * Lengkapi pengujian pada skenario berhasil membuat objek addedThread.
+     * Pastikan terdapat proses `assertion`
+     * yang mengecek nilai-nilai properti yang berada di dalam objek `addedThread`.
+     */
     const payload = {
-      id: 'thread-id',
-      title: 'thread-title',
-      owner: 'thread-owner',
+      id: 'thread-123',
+      title: 'sebuah thread',
+      owner: 'user-123',
     };
 
-    const {id, title, owner,} = new AddedThread(payload);
+    const addedThread = new AddedThread(payload);
 
-    expect(id).toEqual(payload.id);
-    expect(title).toEqual(payload.title);
-    expect(owner).toEqual(payload.owner);
+    expect(addedThread.id).toEqual(payload.id);
+    expect(addedThread.title).toEqual(payload.title);
+    expect(addedThread.owner).toEqual(payload.owner);
   });
 });
