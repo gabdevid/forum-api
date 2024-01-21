@@ -1,7 +1,7 @@
 const AddCommentUseCase = require('../../../../Applications/use_case/AddCommentUseCase');
 const DeleteCommentUseCase = require('../../../../Applications/use_case/DeleteCommentUseCase');
 
-class CommentsHandler {
+class CommentHandler {
   constructor(container) {
     this._container = container;
 
@@ -10,42 +10,51 @@ class CommentsHandler {
   }
 
   async postCommentHandler(request, h) {
-    const addCommentUseCase = this._container.getInstance(AddCommentUseCase.name);
-    const addedComment = await addCommentUseCase.execute({
+    const addCommentUseCase = this._container.getInstance(
+      AddCommentUseCase.name,
+    );
+
+    const { id: owner } = request.auth.credentials;
+    const threadId = request.params.threadId;
+
+    const useCasePayload = {
       content: request.payload.content,
-      threadId: request.params.threadId,
-      owner: request.auth.credentials.id,
-    });
+      threadId,
+      owner,
+    };
+
+    const addedComment = await addCommentUseCase.execute(useCasePayload);
 
     const response = h.response({
       status: 'success',
-      message: 'Komentar berhasil ditambahkan',
       data: {
         addedComment,
       },
     });
-
     response.code(201);
     return response;
   }
 
-  async deleteCommentHandler({ params, auth }, h) {
-    const useCasePayload = {
-      commentId: params.commentId,
-      threadId: params.threadId,
-      owner: auth.credentials.id,
-    };
-
-    const deleteComment = this._container.getInstance(
+  async deleteCommentHandler(request, h) {
+    const deleteCommentUseCase = this._container.getInstance(
       DeleteCommentUseCase.name,
     );
-    await deleteComment.execute(useCasePayload);
 
-    return {
-      status: 'success',
-      message: 'Komentar berhasil dihapus',
+    const { id: owner } = request.auth.credentials;
+    const threadId = request.params.threadId;
+    const commentId = request.params.commentId;
+
+    const useCasePayload = {
+      id: commentId,
+      threadId,
+      owner,
     };
+    await deleteCommentUseCase.execute(useCasePayload);
+
+    return h.response({
+      status: 'success',
+    });
   }
 }
 
-module.exports = CommentsHandler;
+module.exports = CommentHandler;
